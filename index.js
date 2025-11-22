@@ -102,17 +102,20 @@ app.post('/generate', async (req, res) => {
 
     // 2) Image generation
     let afterUrl = null;
-    try:
-        imgResp = await client.images.generate({
-          model: "gpt-image-1",
-          prompt: plan.image_prompt || "Mejora la imagen.",
-          size: "1024x1024"
-        });
-        const b64 = imgResp.data?.[0]?.b64_json;
-        if (b64):
-            afterUrl = `data:image/png;base64,${b64}`;
-    except Exception as e:
-        console.log("Error generando imagen:", e);
+    try {
+      const imgResp = await client.images.generate({
+        model: "gpt-image-1",
+        prompt: plan.image_prompt || "Mejora la imagen.",
+        size: "1024x1024"
+      });
+
+      const b64 = imgResp.data?.[0]?.b64_json;
+      if (b64) {
+        afterUrl = `data:image/png;base64,${b64}`;
+      }
+    } catch (e) {
+      console.log("Error generando imagen:", e);
+    }
 
     return res.json({
       before_img: imageUrl,
@@ -135,3 +138,4 @@ app.post('/generate', async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log("Backend IA escuchando en puerto " + PORT));
+
